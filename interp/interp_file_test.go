@@ -7,7 +7,7 @@ import (
 	"go/token"
 	"os"
 	"path/filepath"
-	"regexp"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -86,9 +86,10 @@ func runCheck(t *testing.T, p string) {
 		t.Fatal(err)
 	}
 
+	res := strings.TrimSpace(stdout.String())
 	// Remove path in output, to have results independent of location.
-	re := regexp.MustCompile(p + ":")
-	if res := re.ReplaceAllString(strings.TrimSpace(stdout.String()), ""); res != wanted {
+	res = strings.ReplaceAll(res, filepath.ToSlash(p)+":", "")
+	if res != wanted {
 		t.Errorf("\ngot:  %q,\nwant: %q", res, wanted)
 	}
 }
